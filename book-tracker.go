@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/andrew-pester/book-tracker/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +15,7 @@ func main() {
 	public.DELETE("/remove/:book", removeBook)
 	public.PATCH("/update/:book", updateBook)
 	public.GET("/get/:book", getBook)
+	models.ConnectDataBase()
 
 	r.Run(":8080")
 
