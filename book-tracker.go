@@ -9,14 +9,14 @@ import (
 func main() {
 
 	r := gin.Default()
-
+	//Used to initialize the session for database connection
 	models.ConnectDataBase()
 	public := r.Group("/api")
 
 	public.POST("/book/add", controllers.AddBook)
 	public.DELETE("/book/delete", controllers.DeleteBook)
 	public.PATCH("/book/update", controllers.UpdateBook)
-	public.GET("/book/get", controllers.GetBook)
+	public.GET("/book/get", controllers.GetBookISBN)
 
 	r.Run(":8080")
 

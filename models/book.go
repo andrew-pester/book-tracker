@@ -3,29 +3,27 @@ package models
 import (
 	"context"
 	"log"
+	"os"
 	"strconv"
 	"time"
-
-	"github.com/gocql/gocql"
 )
 
 type Book struct {
+	ISBN        int64
 	Title       string
 	Author      string
+	Publisher   string
 	ReleaseTime time.Time
 }
+
+var databaseName string = os.Getenv("DB_NAME")
 
 func (b *Book) SaveBook() (*Book, error) {
 
 	ctx := context.Background()
-
-	if err := DB.Query("CREATE TABLE IF NOT EXISTS inventory.book ( id UUID, title text, author text, releaseTime timestamp, PRIMARY KEY (title));").WithContext(ctx).Exec(); err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("DB: %s", strconv.FormatBool(DB.Closed()))
-	if err := DB.Query("INSERT INTO inventory.book (id, title, author, releaseTime) VALUES (?, ?, ?, ?)",
-		gocql.TimeUUID(), b.Title, b.Author, b.ReleaseTime).WithContext(ctx).Exec(); err != nil {
+	query := "INSERT INTO " + databaseName + " (ISBN, title, author, publisher,releaseTime) VALUES (?, ?, ?, ?, ?)"
+	if err := DB.Query(query,
+		b.ISBN, b.Title, b.Author, b.Publisher, b.ReleaseTime).WithContext(ctx).Exec(); err != nil {
 		log.Fatal(err)
 	}
 	return b, nil
@@ -33,25 +31,26 @@ func (b *Book) SaveBook() (*Book, error) {
 
 func (b *Book) UpdateBook() (*Book, error) {
 	ctx := context.Background()
-
-	if err := DB.Query("UPDATE inventory.book  SET author=?,releaseTime=? WHERE title='"+b.Title+"'",
-		b.Author, b.ReleaseTime).WithContext(ctx).Exec(); err != nil {
+	query := "UPDATE " + databaseName + " SET title=?,author=?,publisher=?,releaseTime=? WHERE ISBN=" + strconv.FormatInt(b.ISBN, 10)
+	if err := DB.Query(query, b.Title, b.Author, b.Publisher, b.ReleaseTime).WithContext(ctx).Exec(); err != nil {
 		log.Fatal(err)
 	}
 	return b, nil
 }
 
-func (b *Book) GetBook() (*Book, error) {
+func (b *Book) GetBookByISBN() (*Book, error) {
 	ctx := context.Background()
-	if err := DB.Query("SELECT author, title, releaseTime from inventory.book WHERE title='"+b.Title+"'").WithContext(ctx).Scan(&b.Author, &b.Title, &b.ReleaseTime); err != nil {
+	query := "SELECT title, author, publisher, releaseTime FROM " + databaseName + " WHERE ISBN=" + strconv.FormatInt(b.ISBN, 10)
+	if err := DB.Query(query).WithContext(ctx).Scan(&b.Title, &b.Author, &b.Publisher, &b.ReleaseTime); err != nil {
 		log.Fatal(err)
 	}
 	return b, nil
 }
 
-func (b *Book) DeleteBook() (*Book, error) {
+func (b *Book) DeleteBookByISBN() (*Book, error) {
 	ctx := context.Background()
-	if err := DB.Query("DELETE FROM inventory.book WHERE title='" + b.Title + "'").WithContext(ctx).Exec(); err != nil {
+	query := "DELETE FROM " + databaseName + " WHERE ISBN=" + strconv.FormatInt(b.ISBN, 10)
+	if err := DB.Query(query).WithContext(ctx).Exec(); err != nil {
 		log.Fatal(err)
 	}
 	return b, nil

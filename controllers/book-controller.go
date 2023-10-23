@@ -10,8 +10,10 @@ import (
 )
 
 type BookInput struct {
+	ISBN        int64  `json:"isbn" binding:"required"`
 	Title       string `json:"title" binding:"required"`
 	Author      string `json:"author" binding:"required"`
+	Publisher   string `json:"publisher" binding:"required"`
 	ReleaseTime string `json:"releaseTime" binding:"required"`
 }
 
@@ -23,8 +25,10 @@ func AddBook(c *gin.Context) {
 		return
 	}
 	b := models.Book{}
-	b.Author = input.Author
+	b.ISBN = input.ISBN
 	b.Title = input.Title
+	b.Author = input.Author
+	b.Publisher = input.Publisher
 	if inputTime, err := time.Parse(time.RFC3339, input.ReleaseTime); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -43,8 +47,10 @@ func UpdateBook(c *gin.Context) {
 		return
 	}
 	b := models.Book{}
-	b.Author = input.Author
+	b.ISBN = input.ISBN
 	b.Title = input.Title
+	b.Author = input.Author
+	b.Publisher = input.Publisher
 	if inputTime, err := time.Parse(time.RFC3339, input.ReleaseTime); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -52,46 +58,36 @@ func UpdateBook(c *gin.Context) {
 		b.ReleaseTime = inputTime
 	}
 	b.UpdateBook()
-	log.Println("Saved Book")
+	log.Println("Successfully Saved Book")
 }
 
-func GetBook(c *gin.Context) {
-	var input BookInput
+type InputISBN struct {
+	ISBN int64 `json:"isbn" binding:"required"`
+}
+
+func GetBookISBN(c *gin.Context) {
+	var input InputISBN
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	b := models.Book{}
-	b.Author = input.Author
-	b.Title = input.Title
-	if inputTime, err := time.Parse(time.RFC3339, input.ReleaseTime); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	} else {
-		b.ReleaseTime = inputTime
-	}
-	b.GetBook()
+	b.ISBN = input.ISBN
+	b.GetBookByISBN()
 	log.Println("Successfully retrieved book")
 	c.JSON(http.StatusAccepted, gin.H{"Title": b.Title, "Author": b.Author, "releaseTime": b.ReleaseTime.Format(time.RFC3339)})
 }
 
 func DeleteBook(c *gin.Context) {
-	var input BookInput
+	var input InputISBN
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	b := models.Book{}
-	b.Author = input.Author
-	b.Title = input.Title
-	if inputTime, err := time.Parse(time.RFC3339, input.ReleaseTime); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	} else {
-		b.ReleaseTime = inputTime
-	}
-	b.DeleteBook()
+	b.ISBN = input.ISBN
+	b.DeleteBookByISBN()
 	log.Println("Successfully deleted book")
 }

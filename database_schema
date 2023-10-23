@@ -1,0 +1,2 @@
+CREATE KEYSPACE IF NOT EXISTS inventory WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '1' };
+CREATE TABLE IF NOT EXISTS inventory.books ( ISBN bigint, title text, author text, publisher text, releaseTime timestamp, PRIMARY KEY (ISBN));
