@@ -10,11 +10,11 @@ import (
 )
 
 type BookInput struct {
-	ISBN        int64  `json:"isbn" binding:"required"`
-	Title       string `json:"title" binding:"required"`
-	Author      string `json:"author" binding:"required"`
-	Publisher   string `json:"publisher" binding:"required"`
-	ReleaseTime string `json:"releaseTime" binding:"required"`
+	ISBN        int64     `json:"isbn" binding:"required"`
+	Title       string    `json:"title" binding:"required"`
+	Author      string    `json:"author" binding:"required"`
+	Publisher   string    `json:"publisher" binding:"required"`
+	ReleaseTime time.Time `json:"releaseTime" binding:"required"`
 }
 
 func AddBook(c *gin.Context) {
@@ -29,12 +29,7 @@ func AddBook(c *gin.Context) {
 	b.Title = input.Title
 	b.Author = input.Author
 	b.Publisher = input.Publisher
-	if inputTime, err := time.Parse(time.RFC3339, input.ReleaseTime); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	} else {
-		b.ReleaseTime = inputTime
-	}
+	b.ReleaseTime = input.ReleaseTime
 	b.SaveBook()
 	log.Println("Saved Book")
 }
@@ -51,12 +46,7 @@ func UpdateBook(c *gin.Context) {
 	b.Title = input.Title
 	b.Author = input.Author
 	b.Publisher = input.Publisher
-	if inputTime, err := time.Parse(time.RFC3339, input.ReleaseTime); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	} else {
-		b.ReleaseTime = inputTime
-	}
+	b.ReleaseTime = input.ReleaseTime
 	b.UpdateBook()
 	log.Println("Successfully Saved Book")
 }

@@ -18,6 +18,9 @@ func main() {
 	public.PATCH("/book/update", controllers.UpdateBook)
 	public.GET("/book/get", controllers.GetBookISBN)
 
+	// protected := r.Group("/api/admin")
+	// protected.Use(middleware)
+
 	r.Run(":8080")
 
 }
