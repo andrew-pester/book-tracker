@@ -15,6 +15,7 @@ func ConnectDataBase() {
 	port := os.Getenv("DB_PORT")
 	username := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
+	initializeDatabase(os.Getenv("DB_NAME"))
 	cluster := gocql.NewCluster(host + ":" + port)
 	cluster.Consistency = gocql.Quorum
 	cluster.Keyspace = os.Getenv("DB_KEYSPACE")
