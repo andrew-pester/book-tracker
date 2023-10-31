@@ -10,6 +10,7 @@
 .vscode
 *.env
 keys
+database_schema
 
 # Test binary, built with `go test -c`
 *.test

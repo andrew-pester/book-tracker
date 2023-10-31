@@ -2,12 +2,12 @@ FROM golang:1.21
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY src/go.mod src/go.sum ./
 
 RUN go mod download && go mod verify
 
 EXPOSE 8080
 
 
-COPY . .
+COPY src ./
 CMD [ "go", "run", "book-tracker.go" ]
