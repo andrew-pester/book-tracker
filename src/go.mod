@@ -45,5 +45,4 @@ require (
 require (
 	github.com/coreos/go-oidc/v3 v3.7.0
 	github.com/gocql/gocql v1.6.0
-	github.com/joho/godotenv v1.5.1
 )

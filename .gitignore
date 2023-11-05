@@ -11,6 +11,7 @@
 *.env
 keys
 database_schema
+ansible_scripts
 
 # Test binary, built with `go test -c`
 *.test
