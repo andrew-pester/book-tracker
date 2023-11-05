@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/andrew-pester/book-tracker/models"
+	"github.com/andrew-pester/book-tracker/models/books"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,13 +24,13 @@ func AddBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := models.Book{}
+	b := books.Book{}
 	b.ISBN = input.ISBN
 	b.Title = input.Title
 	b.Author = input.Author
 	b.Publisher = input.Publisher
 	b.ReleaseTime = input.ReleaseTime
-	b.SaveBook()
+	// b.SaveBook()
 	log.Println("Saved Book")
 }
 
@@ -41,13 +41,13 @@ func UpdateBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := models.Book{}
+	b := books.Book{}
 	b.ISBN = input.ISBN
 	b.Title = input.Title
 	b.Author = input.Author
 	b.Publisher = input.Publisher
 	b.ReleaseTime = input.ReleaseTime
-	b.UpdateBook()
+	// b.UpdateBook()
 	log.Println("Successfully Saved Book")
 }
 
@@ -62,9 +62,9 @@ func GetBookISBN(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := models.Book{}
+	b := books.Book{}
 	b.ISBN = input.ISBN
-	b.GetBookByISBN()
+	// b.GetBookByISBN()
 	log.Println("Successfully retrieved book")
 	c.JSON(http.StatusAccepted, gin.H{"Title": b.Title, "Author": b.Author, "releaseTime": b.ReleaseTime.Format(time.RFC3339)})
 }
@@ -76,8 +76,8 @@ func DeleteBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := models.Book{}
+	b := books.Book{}
 	b.ISBN = input.ISBN
-	b.DeleteBookByISBN()
+	// b.DeleteBookByISBN()
 	log.Println("Successfully deleted book")
 }

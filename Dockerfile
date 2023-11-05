@@ -16,7 +16,7 @@ ENV DB_USER="cassandra"
 ENV DB_PASSWORD="cassandra"
 ENV CLIENT_ID="book-tracker-client"
 ENV BOOK_ADMIN_ROLE="book-admin"
-ENV PROVIDER_URL="http://eef4b3940216:8080/realms/myrealm"
+ENV PROVIDER_URL="http://keycloak:8080/realms/myrealm"
 
 
 COPY src ./
