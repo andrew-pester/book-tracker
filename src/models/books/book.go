@@ -1,8 +1,6 @@
 package books
 
 import (
-	"errors"
-	"strconv"
 	"time"
 )
 
@@ -14,18 +12,8 @@ type Book struct {
 	ReleaseTime time.Time
 }
 
-func New(isbn int64, title string, author string, publisher string, releaseTime time.Time) (*Book, error) {
-
-	return &Book{}, nil
-}
-func validateISBN(isbn int64) error {
-	if len(strconv.FormatInt(isbn, 10)) != 13 {
-		return errors.New("ISBN is not the approriate length")
-	}
-	return nil
-}
-func validateTitle(title string) error {
-	return nil
+func New(isbn int64, title string, author string, publisher string, releaseTime time.Time) *Book {
+	return &Book{isbn, title, author, publisher, releaseTime}
 }
 
 func (b *Book) GetISBN() int64 {
@@ -42,19 +30,4 @@ func (b *Book) GetPublisher() string {
 }
 func (b *Book) GetReleaseTime() time.Time {
 	return b.ReleaseTime
-}
-func (b *Book) SetISBN(isbn int64) {
-	b.ISBN = isbn
-}
-func (b *Book) SetTitle(title string) {
-	b.Title = title
-}
-func (b *Book) SetAuthor(author string) {
-	b.Author = author
-}
-func (b *Book) SetPublisher(publisher string) {
-	b.Publisher = publisher
-}
-func (b *Book) SetReleaseTime(releaseTime time.Time) {
-	b.ReleaseTime = releaseTime
 }

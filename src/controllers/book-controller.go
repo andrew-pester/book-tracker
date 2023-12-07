@@ -5,16 +5,20 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/andrew-pester/book-tracker/databases"
 	"github.com/andrew-pester/book-tracker/models/books"
 	"github.com/gin-gonic/gin"
 )
 
+type InputISBN struct {
+	ISBN int64 `json:"isbn" binding:"required,isbn13"`
+}
 type BookInput struct {
-	ISBN        int64     `json:"isbn" binding:"required"`
-	Title       string    `json:"title" binding:"required"`
-	Author      string    `json:"author" binding:"required"`
-	Publisher   string    `json:"publisher" binding:"required"`
-	ReleaseTime time.Time `json:"releaseTime" binding:"required"`
+	ISBN        int64     `json:"isbn" binding:"required,isbn13"`
+	Title       string    `json:"title" binding:"required,alphanum"`
+	Author      string    `json:"author" binding:"required,alphanum"`
+	Publisher   string    `json:"publisher" binding:"required,alphanum"`
+	ReleaseTime time.Time `json:"releaseTime" binding:"required,datetime"`
 }
 
 func AddBook(c *gin.Context) {
@@ -24,13 +28,8 @@ func AddBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := books.Book{}
-	b.ISBN = input.ISBN
-	b.Title = input.Title
-	b.Author = input.Author
-	b.Publisher = input.Publisher
-	b.ReleaseTime = input.ReleaseTime
-	// b.SaveBook()
+	b := books.New(input.ISBN, input.Title, input.Author, input.Publisher, input.ReleaseTime)
+	databases.CreateBook(b)
 	log.Println("Saved Book")
 }
 
@@ -41,18 +40,9 @@ func UpdateBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := books.Book{}
-	b.ISBN = input.ISBN
-	b.Title = input.Title
-	b.Author = input.Author
-	b.Publisher = input.Publisher
-	b.ReleaseTime = input.ReleaseTime
-	// b.UpdateBook()
+	b := books.New(input.ISBN, input.Title, input.Author, input.Publisher, input.ReleaseTime)
+	databases.UpdateBook(b)
 	log.Println("Successfully Saved Book")
-}
-
-type InputISBN struct {
-	ISBN int64 `json:"isbn" binding:"required"`
 }
 
 func GetBookISBN(c *gin.Context) {
@@ -62,9 +52,9 @@ func GetBookISBN(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := books.Book{}
+	b := &books.Book{}
 	b.ISBN = input.ISBN
-	// b.GetBookByISBN()
+	databases.ReadBookByISBN(b)
 	log.Println("Successfully retrieved book")
 	c.JSON(http.StatusAccepted, gin.H{"Title": b.Title, "Author": b.Author, "releaseTime": b.ReleaseTime.Format(time.RFC3339)})
 }
@@ -76,8 +66,8 @@ func DeleteBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	b := books.Book{}
+	b := &books.Book{}
 	b.ISBN = input.ISBN
-	// b.DeleteBookByISBN()
+	databases.DeleteBookByISBN(b)
 	log.Println("Successfully deleted book")
 }
